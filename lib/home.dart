@@ -15,14 +15,30 @@ class _HomeState extends State<Home> {
   int selectedTab = 0;
   late PageController _pageController;
 
-  List<String> images = [
-    "https://png.pngtree.com/png-clipart/20200226/original/pngtree-cute-cartoon-dog-in-a-pocket-png-image_5317215.jpg",
-    "https://img.freepik.com/free-vector/cute-dog-with-rose-flower-cartoon-illustration_138676-3234.jpg?w=2000",
-    "https://m.media-amazon.com/images/I/81aCJakI4DL._SL1500_.jpg",
-    "https://img.freepik.com/free-vector/cute-corgi-dog-eating-bone-cartoon_138676-2534.jpg?w=2000",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Plus_symbol.svg/1200px-Plus_symbol.svg.png"
+  List<List<String>> images = [
+    [
+      "https://png.pngtree.com/png-clipart/20200226/original/pngtree-cute-cartoon-dog-in-a-pocket-png-image_5317215.jpg",
+      "0"
+    ],
+    [
+      "https://img.freepik.com/free-vector/cute-dog-with-rose-flower-cartoon-illustration_138676-3234.jpg?w=2000",
+      "1"
+    ],
+    ["https://m.media-amazon.com/images/I/81aCJakI4DL._SL1500_.jpg", "2"],
+    [
+      "https://img.freepik.com/free-vector/cute-corgi-dog-eating-bone-cartoon_138676-2534.jpg?w=2000",
+      "3"
+    ],
+    [
+      "https://cdn.dribbble.com/users/1044993/screenshots/14192069/media/5628c04245c25b815e3c2e5d19db2a4c.png?compress=1&resize=400x300",
+      "4"
+    ],
+    [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Plus_symbol.svg/1200px-Plus_symbol.svg.png",
+      "5"
+    ]
   ];
-  List<String> images2 = ["Dog1", "Dog2", "Dog3", "Dog4", "+"];
+  List<String> images2 = ["Dog1", "Dog2", "Dog3", "Dog4", "Dog5", "+"];
   @override
   void initState() {
     super.initState();
@@ -61,6 +77,12 @@ class _HomeState extends State<Home> {
       Center(
         child: Text(
           "Page 4",
+          style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
+        ),
+      ),
+      Center(
+        child: Text(
+          "Page 5",
           style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
         ),
       ),
@@ -220,67 +242,69 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-                Transform.translate(
-                  offset: Offset(40, 0),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50.0),
-                    child: Container(
-                      height: 200,
-                      child: PageView.builder(
-                          padEnds: false,
-                          itemCount: images.length + 3,
-                          onPageChanged: (x) {
-                            if (x != images.length - 1) {
-                              setState(() {
-                                selectedTab = x;
-                              });
-                            } else {
-                              _pageController.animateToPage(images.length - 2,
-                                  duration: Duration(milliseconds: 200),
-                                  curve: Curves.linear);
-                            }
-                          },
-                          controller: _pageController,
-                          itemBuilder: (context, pagePosition) {
-                            return pagePosition < images.length
-                                ? FractionallySizedBox(
-                                    heightFactor:
-                                        selectedTab == pagePosition ? 1 : 0.35,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        if (pagePosition != images.length - 1) {
-                                          setState(() {
-                                            selectedTab = pagePosition;
-                                          });
-                                          _pageController.animateToPage(
-                                              pagePosition,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.linear);
-                                        } else {
-                                          _pageController.animateToPage(0,
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              curve: Curves.linear);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      NewPet()));
-                                        }
-                                      },
-                                      child: CircleAvatar(
-                                        child: Text("${images2[pagePosition]}"),
-                                      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: 40, left: (size.width / 35)),
+                        child: Container(
+                          width: size.width / 2.2,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          child: CircleAvatar(
+                            child: Text(images[0][1]),
+                            radius: 60,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: Container(
+                            height: 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, currentTile) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (currentTile + 1 < images.length - 1) {
+                                        setState(() {
+                                          List<String> temp = images[0];
+                                          images[0] = images[currentTile + 1];
+                                          images[currentTile + 1] = temp;
+                                          selectedTab = int.parse(images[0][1]);
+                                        });
+                                      } else {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NewPet()));
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      child: Text(
+                                          currentTile != images.length - 2
+                                              ? images[currentTile + 1][1]
+                                              : "+"),
+                                      radius: 25,
                                     ),
-                                  )
-                                : SizedBox(
-                                    width: 0,
-                                  );
-                          }),
-                    ),
+                                  ),
+                                );
+                              },
+                              itemCount: images.length - 1,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                ),
+                )
               ],
             ),
             Container(
