@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
     "https://img.freepik.com/free-vector/cute-corgi-dog-eating-bone-cartoon_138676-2534.jpg?w=2000",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Plus_symbol.svg/1200px-Plus_symbol.svg.png"
   ];
-
+  List<String> images2 = ["Dog1", "Dog2", "Dog3", "Dog4", "+"];
   @override
   void initState() {
     super.initState();
@@ -174,7 +174,8 @@ class _HomeState extends State<Home> {
                   height: 200,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage("images/appbarBackground.jpg")),
+                      image: AssetImage("images/appbarBackground.png"),
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -219,95 +220,67 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0),
-                  child: Container(
-                    height: 200,
-                    child: PageView.builder(
-                        padEnds: false,
-                        itemCount: images.length,
-                        physics: NeverScrollableScrollPhysics(),
-                        onPageChanged: (x) {
-                          if (x != images.length - 1) {
-                            setState(() {
-                              selectedTab = x;
-                            });
-                          } else {
-                            print("Last Page");
-                          }
-                        },
-                        controller: _pageController,
-                        itemBuilder: (context, pagePosition) {
-                          return FractionallySizedBox(
-                            heightFactor:
-                                selectedTab == pagePosition ? 1 : 0.35,
-                            child: GestureDetector(
-                              onTap: () {
-                                if (pagePosition != images.length - 1) {
-                                  setState(() {
-                                    selectedTab = pagePosition;
-                                  });
-                                } else {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => NewPet()));
-                                }
-                                _pageController.animateTo(-100,
-                                    duration: Duration(milliseconds: 200),
-                                    curve: Curves.linear);
-                              },
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  images[pagePosition],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+                Transform.translate(
+                  offset: Offset(40, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: Container(
+                      height: 200,
+                      child: PageView.builder(
+                          padEnds: false,
+                          itemCount: images.length + 3,
+                          onPageChanged: (x) {
+                            if (x != images.length - 1) {
+                              setState(() {
+                                selectedTab = x;
+                              });
+                            } else {
+                              _pageController.animateToPage(images.length - 2,
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.linear);
+                            }
+                          },
+                          controller: _pageController,
+                          itemBuilder: (context, pagePosition) {
+                            return pagePosition < images.length
+                                ? FractionallySizedBox(
+                                    heightFactor:
+                                        selectedTab == pagePosition ? 1 : 0.35,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (pagePosition != images.length - 1) {
+                                          setState(() {
+                                            selectedTab = pagePosition;
+                                          });
+                                          _pageController.animateToPage(
+                                              pagePosition,
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.linear);
+                                        } else {
+                                          _pageController.animateToPage(0,
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.linear);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      NewPet()));
+                                        }
+                                      },
+                                      child: CircleAvatar(
+                                        child: Text("${images2[pagePosition]}"),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width: 0,
+                                  );
+                          }),
+                    ),
                   ),
                 ),
-                // Container(
-                //   height: 200,
-                //   child: ListView.builder(
-                //     itemCount: images.length,
-                //     // physics: NeverScrollableScrollPhysics(),
-                //     // shrinkWrap: true,
-                //     controller: _pageController,
-                //     scrollDirection: Axis.horizontal,
-                //     itemBuilder: (BuildContext context, int pagePosition) {
-                //       return Padding(
-                //         padding: const EdgeInsets.only(right: 10.0),
-                //         child: FractionallySizedBox(
-                //           heightFactor: selectedTab == pagePosition ? 1 : 0.35,
-                //           child: GestureDetector(
-                //             onTap: () {
-                //               if (pagePosition != images.length - 1) {
-                //                 setState(() {
-                //                   selectedTab = pagePosition;
-                //                 });
-                //               } else {
-                //                 Navigator.push(
-                //                     context,
-                //                     MaterialPageRoute(
-                //                         builder: (context) => NewPet()));
-                //               }
-                //               _pageController.animateToPage(pagePosition,
-                //                   duration: Duration(milliseconds: 200),
-                //                   curve: Curves.linear);
-                //             },
-                //             child: CircleAvatar(
-                //               backgroundImage: NetworkImage(
-                //                 images[pagePosition],
-                //               ),
-                //               radius: 50,
-                //             ),
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // )
               ],
             ),
             Container(
